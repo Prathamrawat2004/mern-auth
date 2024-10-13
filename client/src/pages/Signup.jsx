@@ -26,7 +26,7 @@ export default function Signup() {
       });
       const data = await res.json();
       setloading(false);
-      if(data.success === false){
+      if (data.success === false) {
         seterror(true);
         return;
       }
@@ -61,7 +61,10 @@ export default function Signup() {
           id="password"
           onChange={handleChange}
         />
-        <button disabled={loading} className="bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80">
+        <button
+          disabled={loading}
+          className="bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80"
+        >
           {loading ? "Loading..." : "Sign Up"}
         </button>
       </form>
@@ -71,7 +74,7 @@ export default function Signup() {
           <span className="text-red-700">Sign in</span>
         </Link>
       </div>
-      <p className="text-red-700">{error && 'Something went wrong!...'}</p>
+      <p className="text-red-700">{error && "Something went wrong!..."}</p>
     </div>
   );
 }
