@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import userRoutes from "./routes/user.js";
 import authRoutes from "./routes/auth.js";
+import cors from "cors"; 
 dotenv.config();
 
 const app = express();
@@ -18,6 +19,7 @@ mongoose
   });
 
 // middleware
+app.use(cors());
 app.use(express.json());
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
