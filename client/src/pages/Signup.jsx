@@ -1,11 +1,12 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function Signup() {
   // creating a function to track changes in form
   const [formData, setformData] = useState({}); // initially an empty object
   const [error, seterror] = useState(false);
   const [loading, setloading] = useState(false);
+  const navigate = useNavigate();
   const handleChange = (e) => {
     setformData({ ...formData, [e.target.id]: e.target.value });
   };
@@ -30,6 +31,7 @@ export default function Signup() {
         seterror(true);
         return;
       }
+      navigate("/");
     } catch (error) {
       setloading(false);
       seterror(true);
