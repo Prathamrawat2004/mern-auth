@@ -6,21 +6,24 @@ import {
   signInFailure,
 } from "../redux/user/userSlice";
 import { useDispatch, useSelector } from "react-redux";
+import OAuth from "../Components/OAuth";
 
 export default function Signin() {
-  // creating a function to track changes in form
-  const [formData, setformData] = useState({}); // initially an empty object
+  // Initialize formData with empty email and password fields
+  const [formData, setformData] = useState({
+    email: "",
+    password: ""
+  });
   const { loading, error } = useSelector((state) => state.user);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
   const handleChange = (e) => {
     setformData({ ...formData, [e.target.id]: e.target.value });
   };
 
-  // creating function to submit form data
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // with fetch there is error handling in trycatch but in axios it works well
     try {
       dispatch(signInStart());
       const res = await fetch("http://localhost:3000/api/auth/signin", {
@@ -51,14 +54,18 @@ export default function Signin() {
           className="bg-slate-100 p-3 rounded-lg"
           placeholder="Email"
           id="email"
+          value={formData.email} // Use value prop
           onChange={handleChange}
+          autoComplete="off" // Disable browser autocomplete
         />
         <input
           type="password"
           className="bg-slate-100 p-3 rounded-lg"
           placeholder="Password"
           id="password"
+          value={formData.password} // Use value prop
           onChange={handleChange}
+          autoComplete="off" // Disable browser autocomplete
         />
         <button
           disabled={loading}
@@ -66,6 +73,7 @@ export default function Signin() {
         >
           {loading ? "Loading..." : "Sign In"}
         </button>
+        <OAuth/>
       </form>
       <div className="flex gap-2 mt-3">
         <p>Dont have an account?</p>
