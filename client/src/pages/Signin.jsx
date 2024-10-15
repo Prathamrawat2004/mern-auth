@@ -1,12 +1,18 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import {
+  signInStart,
+  signInSuccess,
+  signInFailure,
+} from "../redux/user/userSlice";
+import { useDispatch, useSelector } from "react-redux";
 
 export default function Signin() {
   // creating a function to track changes in form
   const [formData, setformData] = useState({}); // initially an empty object
-  const [error, seterror] = useState(false);
-  const [loading, setloading] = useState(false);
+  const { loading, error } = useSelector((state) => state.user);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const handleChange = (e) => {
     setformData({ ...formData, [e.target.id]: e.target.value });
   };
@@ -16,8 +22,7 @@ export default function Signin() {
     e.preventDefault();
     // with fetch there is error handling in trycatch but in axios it works well
     try {
-      setloading(true);
-      seterror(false);
+      dispatch(signInStart());
       const res = await fetch("http://localhost:3000/api/auth/signin", {
         method: "POST",
         headers: {
@@ -26,15 +31,14 @@ export default function Signin() {
         body: JSON.stringify(formData),
       });
       const data = await res.json();
-      setloading(false);
       if (data.success === false) {
-        seterror(true);
+        dispatch(signInFailure(data));
         return;
       }
+      dispatch(signInSuccess(data));
       navigate("/");
     } catch (error) {
-      setloading(false);
-      seterror(true);
+      dispatch(signInFailure());
     }
   };
 
@@ -69,7 +73,9 @@ export default function Signin() {
           <span className="text-red-700">Sign up</span>
         </Link>
       </div>
-      <p className="text-red-700">{error && "Something went wrong!..."}</p>
+      <p className="text-red-700">
+        {error ? error.message || "Something went wrong!..." : ""}
+      </p>
     </div>
   );
 }
