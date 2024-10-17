@@ -1,6 +1,7 @@
 import User from "../models/user.js";
 import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
+// import { sign } from "jsonwebtoken";
 
 export const signup = async (req, res, next) => {
   const { username, email, password } = req.body;
@@ -42,11 +43,9 @@ export const google = async (req, res, next) => {
     if (user) {
       const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
       const { password: hashedPassword, ...rest } = user._doc;
-      res
-        .cookie("access_token", token, { httpOnly: true })
-        .status(200)
-        .json(rest);
+      res.cookie("access_token", token, { httpOnly: true }).status(200).json(rest);
     } else {
+      // if the user is a new user
       const generatePassword =
         Math.random().toString(36).slice(-8) +
         Math.random().toString(36).slice(-8);
@@ -60,14 +59,12 @@ export const google = async (req, res, next) => {
         profilePicture: req.body.photo,
       });
       await newUser.save();
-
-      // logging in user directly after getting sign up
+      // direct login after signup
       const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET);
       const { password: hashedPassword2, ...rest } = newUser._doc;
-      res
-        .cookie("access_token", token, { httpOnly: true })
-        .status(200)
-        .json(rest);
+      res.cookie("access_token", token, {
+        httpOnly: true,
+      }).status(200).json(rest);
     }
   } catch (error) {}
 };

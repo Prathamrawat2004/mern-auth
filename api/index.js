@@ -31,6 +31,7 @@ app.use((err, req, res, next) => {
   });
 });
 
+
 // Routes
 app.use("/api/user", userRoutes);
 app.use("/api/auth", authRoutes);
