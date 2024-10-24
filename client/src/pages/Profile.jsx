@@ -16,6 +16,7 @@ export default function Profile() {
   const [imagePercent, setimagePercent] = useState(0);
   const [imageError, setimageError] = useState(false);
   const [formData, setformData] = useState({});
+  console.log(formData);
   const { currentUser } = useSelector((state) => state.user);
   useEffect(() => {
     if (image) {
@@ -28,19 +29,25 @@ export default function Profile() {
     const fileName = new Date().getTime() + image.name;
     const storageRef = ref(storage, fileName);
     const uploadTask = uploadBytesResumable(storageRef, image);
-    uploadTask.on("state_changed", (snapshot) => {
-      const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-      setimagePercent(Math.round(progress));
-    });
-    (error) => {
-      setimageError(true);
-    };
-    () => {
-      getDownloadURL(uploadTask.snapshot.ref).then((downloadUrl) => {
-        setformData({ ...formData, profilePicture: downloadUrl });
-      });
-    };
+
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        const progress =
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        setimagePercent(Math.round(progress));
+      },
+      (error) => {
+        setimageError(true);
+      },
+      async () => {
+        // This is the success callback, it will trigger when the upload completes.
+        const downloadUrl = await getDownloadURL(uploadTask.snapshot.ref);
+        setformData((prev) => ({ ...prev, profilePicture: downloadUrl }));
+      }
+    );
   };
+
   return (
     <div className="p-3 max-w-lg mx-auto">
       <h1 className="text-3xl font-semibold text-center my-7">Profile</h1>
@@ -53,7 +60,7 @@ export default function Profile() {
           onChange={(e) => setimage(e.target.files[0])}
         />
         <img
-          src={currentUser.profilePicture}
+          src={formData.profilePicture || currentUser.profilePicture}
           alt="profile"
           className="h-24 w-24 self-center cursor-pointer rounded-full object-cover mt-2"
           onClick={() => fileRef.current.click()}
