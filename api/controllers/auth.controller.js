@@ -66,5 +66,7 @@ export const google = async (req, res, next) => {
         httpOnly: true,
       }).status(200).json(rest);
     }
-  } catch (error) {}
+  } catch (error) {
+    next(error);
+  }
 };
